@@ -208,9 +208,11 @@ body {
 /* Mobile Responsive Adjustments */
 @media (max-width: 480px) {
     .title {
-        font-size: 1.4rem;
-        white-space: nowrap;
-        letter-spacing: -1px;
+        font-size: clamp(1.2rem, 5vw, 1.6rem);
+        white-space: normal;
+        word-break: keep-all;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
     }
 
     .subtitle {

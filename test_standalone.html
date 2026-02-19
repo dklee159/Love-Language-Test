@@ -91,9 +91,11 @@
     /* Mobile Responsive Adjustments */
     @media (max-width: 480px) {
       .title {
-        font-size: 1.4rem;
-        white-space: nowrap;
-        letter-spacing: -1px;
+        font-size: clamp(1.2rem, 5vw, 1.6rem);
+        white-space: normal;
+        word-break: keep-all;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
       }
 
       .subtitle {
@@ -286,6 +288,20 @@
         </div>
       </div>
     </section>
+
+    <!-- Comparison Section -->
+    <section id="comparison-page" class="view">
+      <div class="glass-card comparison-card">
+        <h1 class="title">커플 정밀 비교 💍</h1>
+        <div id="comparison-summary"></div>
+        <div id="comparison-table-container"></div>
+        <div id="comparison-details"></div>
+        <div class="action-buttons" style="margin-top: 20px;">
+          <button id="back-to-results" class="primary-btn" style="background: var(--text-light); width: 100%;">결과로
+            돌아가기</button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -327,18 +343,23 @@
       constructor() {
         this.currentStep = 0;
         this.scores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+        this.answers = [];
         this.views = {
           landing: document.getElementById('landing-page'),
           quiz: document.getElementById('quiz-page'),
-          results: document.getElementById('results-page')
+          results: document.getElementById('results-page'),
+          comparison: document.getElementById('comparison-page')
         };
+        this.labels = { A: '인정하는 말 💬', B: '함께하는 시간 ⏳', C: '선물 🎁', D: '봉사 🤝', E: '스킨십 🫂' };
         this.init();
       }
+
       init() {
         document.getElementById('login-btn').addEventListener('click', () => this.startQuiz());
         document.getElementById('option-a').addEventListener('click', () => this.handleAnswer(0));
         document.getElementById('option-b').addEventListener('click', () => this.handleAnswer(1));
-        document.getElementById('compare-btn').addEventListener('click', () => this.showDummyComparison());
+        document.getElementById('compare-btn').addEventListener('click', () => this.showComparisonPage());
+        document.getElementById('back-to-results').addEventListener('click', () => this.showView('results'));
       }
       showView(name) {
         Object.values(this.views).forEach(v => v.classList.remove('active'));
@@ -347,6 +368,7 @@
       startQuiz() {
         this.currentStep = 0;
         this.scores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+        this.answers = [];
         this.showView('quiz');
         this.updateQuestion();
       }
@@ -362,68 +384,155 @@
       handleAnswer(idx) {
         const type = questions[this.currentStep].options[idx].type;
         this.scores[type]++;
+        this.answers.push(type);
         this.currentStep++;
         setTimeout(() => this.updateQuestion(), 100);
       }
       showResults() {
         this.showView('results');
-        this.renderChart();
-        this.renderDescription();
+        this.renderResultTable();
+        this.renderResultDescription();
       }
-      renderChart() {
+      renderResultTable() {
         const container = document.getElementById('results-chart');
         container.innerHTML = '';
-        const labels = {
-          A: '인정하는 말 💬',
-          B: '함께하는 시간 ⏳',
-          C: '선물 🎁',
-          D: '봉사 🤝',
-          E: '스킨십 🫂'
-        };
-
         const table = document.createElement('table');
-        table.style.cssText = `
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 12px;
-          overflow: hidden;
-        `;
-
-        const headerRow = document.createElement('tr');
-        headerRow.style.background = 'rgba(255, 117, 140, 0.2)';
-        headerRow.innerHTML = `
-          <th style="padding: 12px; border-bottom: 1px solid var(--glass-border); text-align: left;">항목</th>
-          <th style="padding: 12px; border-bottom: 1px solid var(--glass-border);">점수</th>
-        `;
-        table.appendChild(headerRow);
+        table.style.cssText = `width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 12px; overflow: hidden; shadow: var(--shadow);`;
+        table.innerHTML = `<tr style="background: rgba(255, 117, 140, 0.2);"><th style="padding: 12px; text-align: left;">항목 (상세보기)</th><th style="padding: 12px;">점수</th></tr>`;
 
         Object.entries(this.scores).forEach(([type, score]) => {
           const row = document.createElement('tr');
-          row.style.borderBottom = '1px solid var(--glass-border)';
+          row.style.cssText = 'border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: background 0.2s;';
+          row.onclick = () => this.showCategoryDetails(type, this.labels[type]);
+          row.onmouseover = () => row.style.background = 'rgba(255, 255, 255, 0.4)';
+          row.onmouseout = () => row.style.background = 'transparent';
+          row.innerHTML = `<td style="padding: 12px; text-align: left; font-weight: 600;">${this.labels[type]}</td><td style="padding: 12px; font-weight: 800; color: var(--primary-color);">${score}</td>`;
+          table.appendChild(row);
+        });
+        container.appendChild(table);
+      }
+
+      showCategoryDetails(type, label) {
+        const relatedQuestions = questions.filter(q => q.options.some(o => o.type === type));
+        let html = `<div style="text-align: left; margin-top: 15px; padding: 15px; background: white; border-radius: 12px; font-size: 0.85rem; box-shadow: var(--shadow); animation: fadeIn 0.3s ease-out;">
+          <h4 style="margin-bottom: 10px;">🔍 ${label} 상세 분석</h4>`;
+        relatedQuestions.forEach(q => {
+          const myChoiceIdx = this.answers[q.id - 1] === q.options[0].type ? 0 : 1;
+          const isTargetType = q.options[myChoiceIdx].type === type;
+          html += `<div style="margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;"><strong>Q${q.id}</strong>: ${q.options[myChoiceIdx].text} ${isTargetType ? '✅' : ''}</div>`;
+        });
+        html += `</div>`;
+        const area = document.getElementById('detail-area-results');
+        area.innerHTML = html;
+        area.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      renderResultDescription() {
+        const sorted = Object.entries(this.scores).sort((a, b) => b[1] - a[1]);
+        const primary = sorted[0][0];
+        document.getElementById('results-description').innerHTML = `
+          <h3 style="margin-top: 20px; font-size: 1.4rem;">나의 주 언어: ${this.labels[primary]}</h3>
+          <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">항목을 클릭하면 상세 문항을 볼 수 있습니다.</p>
+          <div id="detail-area-results"></div>
+        `;
+      }
+
+      showComparisonPage() {
+        // Mock partner data
+        const partner = {
+          displayName: "더미 파트너",
+          scores: { A: 8, B: 10, C: 2, D: 4, E: 6 },
+          answers: ["A", "B", "C", "D", "E", "B", "C", "A", "B", "A", "A", "E", "C", "B", "A", "B", "C", "A", "E", "D", "B", "C", "D", "C", "B", "E", "A", "C", "A", "E"]
+        };
+
+        this.showView('comparison');
+        const myPrimary = Object.entries(this.scores).sort((a, b) => b[1] - a[1])[0][0];
+        const partnerPrimary = Object.entries(partner.scores).sort((a, b) => b[1] - a[1])[0][0];
+
+        // Summary Header
+        document.getElementById('comparison-summary').innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px;">
+            <div style="text-align: center; flex:1;">
+              <div style="font-size: 0.7rem; color: #888; margin-bottom: 5px;">나의 주 언어</div>
+              <div style="font-size: 1rem; font-weight: 800; color: var(--primary-color); text-align: center;">${this.labels[myPrimary]}</div>
+            </div>
+            <div style="font-size: 1.5rem; margin: 0 10px;">💕</div>
+            <div style="text-align: center; flex:1;">
+              <div style="font-size: 0.7rem; color: #888; margin-bottom: 5px;">상대 주 언어</div>
+              <div style="font-size: 1rem; font-weight: 800; color: #2575fc; text-align: center;">${this.labels[partnerPrimary]}</div>
+            </div>
+          </div>
+        `;
+
+        // Comparison Table
+        const tableContainer = document.getElementById('comparison-table-container');
+        tableContainer.innerHTML = '';
+        const table = document.createElement('table');
+        table.style.cssText = `width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.4); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow);`;
+        table.innerHTML = `
+          <tr style="background: rgba(0,0,0,0.05);">
+            <th style="padding: 15px; font-size: 0.8rem; text-align: left;">항목 (비교하기)</th>
+            <th style="padding: 15px; font-size: 0.8rem;">나</th>
+            <th style="padding: 15px; font-size: 0.8rem;">상대</th>
+          </tr>
+        `;
+
+        Object.entries(this.labels).forEach(([type, label]) => {
+          const row = document.createElement('tr');
+          row.style.cssText = 'border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: background 0.2s;';
+          row.onclick = () => this.renderComparisonDetails(type, label, partner);
+          row.onmouseover = () => row.style.background = 'rgba(255, 255, 255, 0.5)';
+          row.onmouseout = () => row.style.background = 'transparent';
           row.innerHTML = `
-            <td style="padding: 12px; text-align: left; font-weight: 600;">${labels[type]}</td>
-            <td style="padding: 12px; font-size: 1.1rem; font-weight: 800; color: var(--primary-color);">${score}</td>
+            <td style="padding: 15px; text-align: left; font-weight: 600; font-size: 0.85rem;">${label}</td>
+            <td style="padding: 15px; font-weight: 800; color: var(--primary-color);">${this.scores[type]}</td>
+            <td style="padding: 15px; font-weight: 800; color: #2575fc;">${partner.scores[type]}</td>
           `;
           table.appendChild(row);
         });
+        tableContainer.appendChild(table);
 
-        container.appendChild(table);
+        // Initial Tip
+        document.getElementById('comparison-details').innerHTML = `
+          <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.6); border-radius: 20px; text-align: center; color: var(--text-light); font-size: 0.9rem;">
+            위 표에서 항목을 클릭하여<br>서로 어떤 점이 다른지 확인해보세요! 👇
+          </div>
+        `;
       }
-      renderDescription() {
-        const sorted = Object.entries(this.scores).sort((a, b) => b[1] - a[1]);
-        const primary = sorted[0][0];
-        const labels = { A: '인정하는 말 💬', B: '함께하는 시간 ⏳', C: '선물 🎁', D: '봉사 🤝', E: '스킨십 🫂' };
-        document.getElementById('results-description').innerHTML = `<h3 style="margin-top: 20px; font-size: 1.4rem;">나의 주 언어: ${labels[primary]}</h3>`;
-      }
-      showDummyComparison() {
-        const dummy = { displayName: "더미 파트너", scores: { A: 8, B: 10, C: 2, D: 4, E: 6 } };
-        const desc = document.getElementById('results-description');
-        desc.innerHTML += `<div style="margin-top:20px; padding:15px; background:rgba(255,117,140,0.1); border-radius:10px;">
-                    <h4>💕 커플 비교 (더미)</h4>
-                    <p>상대방(${dummy.displayName})의 1위: <strong>함께하는 시간</strong></p>
-                </div>`;
+
+      renderComparisonDetails(type, label, partner) {
+        const relatedQuestions = questions.filter(q => q.options.some(o => o.type === type));
+        let diffCount = 0;
+        let html = `<div style="margin-top: 20px; text-align: left; animation: fadeIn 0.4s ease-out;">
+          <h4 style="margin-bottom: 15px; padding-left: 10px; border-left: 4px solid var(--primary-color);">🤔 ${label} 차이점 분석</h4>`;
+
+        relatedQuestions.forEach(q => {
+          const myChoiceType = this.answers[q.id - 1];
+          const partnerChoiceType = partner.answers[q.id - 1];
+          if (myChoiceType !== partnerChoiceType) {
+            diffCount++;
+            const myText = q.options[myChoiceType === q.options[0].type ? 0 : 1].text;
+            const partnerText = q.options[partnerChoiceType === q.options[0].type ? 0 : 1].text;
+            html += `
+              <div style="background: white; padding: 15px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 12px; font-size: 0.8rem;">
+                <div style="font-weight: 800; color: #555; margin-bottom: 8px;">문항 ${q.id}</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="padding: 8px; background: #fff5f7; border-radius: 8px; color: var(--primary-color);"><strong>나:</strong> ${myText}</div>
+                  <div style="padding: 8px; background: #f0f7ff; border-radius: 8px; color: #2575fc;"><strong>상대:</strong> ${partnerText}</div>
+                </div>
+              </div>
+            `;
+          }
+        });
+
+        if (diffCount === 0) {
+          html += `<div style="background: white; padding: 30px; border-radius: 15px; text-align: center; color: #888;">이 항목은 두 분의 생각이 완벽히 일치합니다! 💖</div>`;
+        }
+
+        html += `</div>`;
+        const container = document.getElementById('comparison-details');
+        container.innerHTML = html;
+        container.scrollIntoView({ behavior: 'smooth' });
       }
     }
     window.onload = () => new LoveLanguageApp();

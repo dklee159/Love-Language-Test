@@ -15,12 +15,12 @@
     :root {
       --primary-color: #ff758c;
       --secondary-color: #ff7eb3;
-      --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-      --glass-bg: rgba(255, 255, 255, 0.25);
-      --glass-border: rgba(255, 255, 255, 0.4);
+      --bg-color: #fce4ec;
+      --glass-bg: rgba(255, 255, 255, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.5);
       --text-color: #2d3436;
       --text-light: #636e72;
-      --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
       --font-heading: 'Outfit', sans-serif;
       --font-body: 'Inter', sans-serif;
     }
@@ -33,13 +33,55 @@
 
     body {
       font-family: var(--font-body);
-      background: var(--bg-gradient);
+      background: var(--bg-color);
+      background-image:
+        radial-gradient(at 0% 0%, #ff9a9e 0px, transparent 50%),
+        radial-gradient(at 50% 0%, #fecfef 0px, transparent 50%),
+        radial-gradient(at 100% 0%, #ffdde1 0px, transparent 50%),
+        radial-gradient(at 0% 100%, #ee9ca7 0px, transparent 50%),
+        radial-gradient(at 50% 100%, #ffdde1 0px, transparent 50%),
+        radial-gradient(at 100% 100%, #fecfef 0px, transparent 50%);
       background-attachment: fixed;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       color: var(--text-color);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating Background Decorations */
+    .bg-blob {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 117, 140, 0.2);
+      filter: blur(80px);
+      border-radius: 50%;
+      z-index: -1;
+      animation: float 15s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      top: -50px;
+      left: -50px;
+    }
+
+    .blob-2 {
+      bottom: -50px;
+      right: -50px;
+      background: rgba(37, 117, 252, 0.15);
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(50px, 30px) scale(1.1);
+      }
     }
 
     .app-container {
@@ -246,10 +288,14 @@
 </head>
 
 <body>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
   <div id="app" class="app-container">
     <!-- Landing Page Section -->
     <section id="landing-page" class="view active">
       <div class="glass-card">
+        <div class="landing-icon" style="font-size: 4rem; margin-bottom: 10px;">👩‍❤️‍👨</div>
         <h1 class="title">5가지 사랑의 언어</h1>
         <p class="subtitle">서로의 마음을 더 깊이 이해하는 시간</p>
         <div class="auth-buttons">

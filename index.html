@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사랑의 언어 테스트 | Love Language Test</title>
+    <meta name="description" content="우리 커플의 사랑의 언어는 무엇일까요? 함께 테스트하고 결과를 공유해보세요.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Landing Page Section -->
+        <section id="landing-page" class="view active">
+            <div class="glass-card">
+                <h1 class="title">5가지 사랑의 언어</h1>
+                <p class="subtitle">서로의 마음을 더 깊이 이해하는 시간</p>
+                <div class="auth-buttons">
+                    <button id="login-btn" class="primary-btn">구글로 시작하기</button>
+                </div>
+                <p class="footer-text">로그인하면 상대방과 결과를 비교할 수 있습니다.</p>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz-page" class="view">
+            <div class="top-bar">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <span class="step-counter" id="step-counter">1 / 30</span>
+            </div>
+            <div class="question-container">
+                <h2 class="question-title">나에게 더 와닿는 것은?</h2>
+                <div class="options">
+                    <button class="option-btn" id="option-a" data-type="">Option A</button>
+                    <div class="divider"><span>OR</span></div>
+                    <button class="option-btn" id="option-b" data-type="">Option B</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-page" class="view">
+            <div class="glass-card results-card">
+                <h1 class="title">나의 사랑의 언어 결과</h1>
+                <div id="results-chart"></div>
+                <div id="results-description"></div>
+                <div class="action-buttons">
+                    <button id="share-btn" class="secondary-btn">파트너와 공유하기</button>
+                    <button id="compare-btn" class="primary-btn">상대 결과 보기</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Firebase SDK (TBD) -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -9,7 +9,7 @@ const auth = app ? getAuth(app) : null;
 const db = app ? getFirestore(app) : null;
 const provider = new GoogleAuthProvider();
 
-const IS_DUMMY_MODE = !app;
+const IS_DUMMY_MODE = false;
 
 class LoveLanguageApp {
   constructor() {
@@ -112,7 +112,6 @@ class LoveLanguageApp {
         this.loginBtn.textContent = "테스트 시작하기";
         this.logoutBtn.style.display = 'block';
         this.footerText.style.display = 'none';
-        console.log("Logged in as:", user.displayName);
         await this.fetchUserResults();
       } else {
         this.user = null;
@@ -152,7 +151,7 @@ class LoveLanguageApp {
         this.showModal({
           title: '다시 테스트하시겠습니까?',
           message: '새로운 테스트 결과로 기존 데이터가 대체됩니다. 계속하시겠습니까?',
-          type: 'prompt', // Utilizing prompt as confirm for now
+          type: 'confirm',
           onConfirm: (val) => { if (val) this.startQuiz(); }
         });
         return;
@@ -242,7 +241,6 @@ class LoveLanguageApp {
       await setDoc(doc(db, "results", this.user.uid), data);
       this.previousResults = data;
       this.updateLandingUI();
-      console.log("Results saved!");
     } catch (error) {
       console.error("Error saving results:", error);
     }
@@ -269,7 +267,7 @@ class LoveLanguageApp {
       setTimeout(() => input.focus(), 100);
     }
 
-    cancelBtn.style.display = type === 'prompt' ? 'block' : 'none';
+    cancelBtn.style.display = (type === 'prompt' || type === 'confirm') ? 'block' : 'none';
     overlay.classList.add('active');
 
     confirmBtn.onclick = () => {

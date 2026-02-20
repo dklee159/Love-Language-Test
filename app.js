@@ -49,7 +49,6 @@ class LoveLanguageApp {
     this.optionB.addEventListener('click', () => this.handleAnswer('B'));
 
     document.getElementById('compare-btn').addEventListener('click', () => this.handleCompare());
-    document.getElementById('share-btn').addEventListener('click', () => this.handleShare());
     document.getElementById('back-to-results').addEventListener('click', () => this.showView('results'));
     document.getElementById('go-home-btn').addEventListener('click', () => this.showView('landing'));
     this.viewResultsBtn.addEventListener('click', () => this.showResults(true));
@@ -86,12 +85,12 @@ class LoveLanguageApp {
       <div style="margin-top: 25px; text-align: left; animation: fadeIn 0.6s ease-out;">
           <h3 style="margin-bottom: 20px; color: var(--primary-color); font-size: 1.3rem; font-weight: 800;">나의 주 언어: ${this.labels[primaryLanguage]}</h3>
           
-          <div class="uid-container">
-            <div style="display: flex; flex-direction: column;">
-              <span class="uid-label">나의 고유 ID</span>
-              <span class="uid-value">${this.user ? this.user.uid : '로그인 필요'}</span>
+          <div class="uid-container" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.5); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+            <div style="display: flex; flex-direction: column; overflow: hidden; margin-right: 10px;">
+              <span class="uid-label" style="font-size: 0.7rem; color: var(--text-light); font-weight: 600; margin-bottom: 2px;">나의 고유 ID</span>
+              <span class="uid-value" style="font-family: inherit; font-size: 0.8rem; color: var(--primary-color); font-weight: 700; word-break: break-all;">${this.user ? this.user.uid : '로그인 필요'}</span>
             </div>
-            <button onclick="window.app.handleShare()" style="background: var(--primary-color); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">복사</button>
+            <button onclick="window.app.handleShare()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 4px 12px rgba(255, 117, 140, 0.2);">복사</button>
           </div>
           
           <div id="detail-area-results"></div>

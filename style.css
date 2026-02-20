@@ -19,29 +19,69 @@
 
 body {
     font-family: var(--font-body);
-    background: var(--bg-gradient);
+    background: #fce4ec;
+    background-image:
+        radial-gradient(at 0% 0%, #ff9a9e 0px, transparent 50%),
+        radial-gradient(at 50% 0%, #fecfef 0px, transparent 50%),
+        radial-gradient(at 100% 0%, #ffdde1 0px, transparent 50%),
+        radial-gradient(at 0% 100%, #ee9ca7 0px, transparent 50%),
+        radial-gradient(at 50% 100%, #ffdde1 0px, transparent 50%),
+        radial-gradient(at 100% 100%, #fecfef 0px, transparent 50%);
     background-attachment: fixed;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--text-color);
-    overflow: hidden;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Floating Background Decorations */
+.bg-blob {
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 117, 140, 0.2);
+    filter: blur(80px);
+    border-radius: 50%;
+    z-index: -1;
+    animation: float 15s infinite alternate ease-in-out;
+}
+
+.blob-1 {
+    top: -50px;
+    left: -50px;
+}
+
+.blob-2 {
+    bottom: -50px;
+    right: -50px;
+    background: rgba(37, 117, 252, 0.15);
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(50px, 30px) scale(1.1);
+    }
 }
 
 .app-container {
     width: 100%;
     max-width: 480px;
-    height: 90vh;
-    position: relative;
     padding: 20px;
+    margin: 0 auto;
 }
 
 .view {
     display: none;
     flex-direction: column;
-    height: 100%;
     animation: fadeIn 0.5s ease-out;
+    width: 100%;
 }
 
 .view.active {
@@ -62,18 +102,19 @@ body {
 
 /* Glassmorphism Card Logic */
 .glass-card {
-    background: var(--glass-bg);
+    background: rgba(255, 255, 255, 0.35);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 24px;
-    padding: 40px 30px;
-    box-shadow: var(--shadow);
+    padding: 30px 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 20px;
+    width: 100%;
 }
 
 /* Typography */
@@ -83,6 +124,7 @@ body {
     font-weight: 700;
     background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 10px;
 }
@@ -98,7 +140,7 @@ body {
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     color: white;
     border: none;
-    padding: 16px 32px;
+    padding: 12px 28px;
     border-radius: 50px;
     font-size: 1.1rem;
     font-weight: 600;
@@ -205,6 +247,165 @@ body {
     font-weight: 700;
 }
 
+/* UID & Results UI */
+.uid-container {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.uid-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.uid-value {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.secondary-btn {
+    background: white;
+    color: var(--text-color);
+    border: 1px solid var(--glass-border);
+    padding: 11px 20px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-btn {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    padding: 8px 20px;
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 117, 140, 0.1);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 117, 140, 0.1);
+}
+
+/* Modal System */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.modal-body {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-top: 15px;
+}
+
+.modal-input:focus {
+    border-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.modal-btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.modal-btn-secondary {
+    background: #f1f2f6;
+    color: var(--text-light);
+}
+
 /* Mobile Responsive Adjustments */
 @media (max-width: 480px) {
     .title {
@@ -224,7 +425,7 @@ body {
     }
 
     .primary-btn {
-        padding: 14px 24px;
+        padding: 11px 20px;
         font-size: 1rem;
     }
 

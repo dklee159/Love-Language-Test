@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +10,28 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
     <div id="app" class="app-container">
         <!-- Landing Page Section -->
         <section id="landing-page" class="view active">
             <div class="glass-card">
+                <div class="landing-icon" style="font-size: 4rem; margin-bottom: 10px;">👩‍❤️‍👨</div>
                 <h1 class="title">5가지 사랑의 언어</h1>
-                <p class="subtitle">서로의 마음을 더 깊이 이해하는 시간</p>
-                <div class="auth-buttons">
+                <p id="welcome-message" class="subtitle">서로의 마음을 더 깊이 이해하는 시간</p>
+                <div class="auth-buttons" style="display: flex; flex-direction: column; gap: 10px;">
                     <button id="login-btn" class="primary-btn">구글로 시작하기</button>
+                    <button id="view-results-btn" class="secondary-btn" style="display: none;">기존 결과 보기</button>
+                    <button id="logout-btn" class="logout-btn" style="display: none;">로그아웃</button>
                 </div>
-                <p class="footer-text">로그인하면 상대방과 결과를 비교할 수 있습니다.</p>
+                <p id="footer-text" class="footer-text">로그인하면 상대방과 결과를 비교할 수 있습니다.</p>
             </div>
         </section>
 
@@ -36,9 +46,9 @@
             <div class="question-container">
                 <h2 class="question-title">나에게 더 와닿는 것은?</h2>
                 <div class="options">
-                    <button class="option-btn" id="option-a" data-type="">Option A</button>
+                    <button class="option-btn" id="option-a">Option A</button>
                     <div class="divider"><span>OR</span></div>
-                    <button class="option-btn" id="option-b" data-type="">Option B</button>
+                    <button class="option-btn" id="option-b">Option B</button>
                 </div>
             </div>
         </section>
@@ -50,14 +60,49 @@
                 <div id="results-chart"></div>
                 <div id="results-description"></div>
                 <div class="action-buttons">
-                    <button id="share-btn" class="secondary-btn">파트너와 공유하기</button>
-                    <button id="compare-btn" class="primary-btn">상대 결과 보기</button>
+                    <button id="share-btn" class="secondary-btn">UID 복사하기</button>
+                    <button id="compare-btn" class="primary-btn">연인과 비교하기</button>
+                </div>
+                <button id="go-home-btn" class="secondary-btn"
+                    style="margin-top: 15px; width: 100%; background: none; border-color: transparent;">처음으로
+                    돌아가기</button>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section id="comparison-page" class="view">
+            <div class="glass-card comparison-card">
+                <h1 class="title">커플 정밀 비교 💍</h1>
+                <div id="comparison-summary"></div>
+                <div id="comparison-table-container"></div>
+                <div id="comparison-details"></div>
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button id="back-to-results" class="primary-btn"
+                        style="background: var(--text-light); width: 100%;">결과로 돌아가기</button>
                 </div>
             </div>
         </section>
     </div>
 
+    <!-- Custom Modal -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" class="modal-title">알림</h3>
+            </div>
+            <div id="modal-body" class="modal-body">
+                내용이 여기에 표시됩니다.
+            </div>
+            <div id="modal-input-container"></div>
+            <div id="modal-footer" class="modal-footer">
+                <button id="modal-cancel" class="modal-btn modal-btn-secondary">취소</button>
+                <button id="modal-confirm" class="modal-btn modal-btn-primary">확인</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK (TBD) -->
     <script type="module" src="app.js"></script>
 </body>
+
 </html>
